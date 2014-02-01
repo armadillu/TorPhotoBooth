@@ -23,9 +23,10 @@ public:
 	void setup(){
 		taxi.loadImage("taxi.png");
 		taxiTop.loadImage("taxi_door.png");
-	}
 
-	void setMode(int mode_){ mode = mode_;}
+		parkImg.loadImage("park.jpg");
+		theaterImg.loadImage("theater.jpg");
+	}
 
 
 	void draw( ofImage & maskedPerson, ofFbo & output){
@@ -42,20 +43,50 @@ public:
 				taxiTop.draw(0,0);
 				break;
 
+			case 1: //theater
+				theaterImg.draw(0,0);
+				ofPushMatrix();
+					ofTranslate(theaterPersonPos);
+					ofScale(-theaterPersonScale, theaterPersonScale, theaterPersonScale);
+					maskedPerson.draw(0,0);
+				ofPopMatrix();
+				break;
+
+			case 2: //park
+				parkImg.draw(0,0);
+				ofPushMatrix();
+					ofTranslate(parkPersonPos);
+					ofScale(-parkPersonScale, parkPersonScale, parkPersonScale);
+					maskedPerson.draw(0,0);
+				ofPopMatrix();
+				break;
+
 			default:
 				break;
 		}
 		output.end();
 	}
 
+	int mode;
+
 	ofVec2f taxiPersonPos;
 	float taxiPersonScale;
 
+	ofVec2f parkPersonPos;
+	float parkPersonScale;
+
+	ofVec2f theaterPersonPos;
+	float theaterPersonScale;
+
 private:
 
-	int mode;
 	ofImage taxi;
 	ofImage taxiTop;
+
+	ofImage parkImg;
+
+	ofImage theaterImg;
+
 };
 
 #endif /* defined(__remoteUI_Sketch__LivePreviewBg__) */

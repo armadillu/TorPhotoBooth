@@ -8,7 +8,7 @@ void testApp::setup(){
 	ofEnableAlphaBlending();
 	ofBackground(0);
 
-	OFX_REMOTEUI_SERVER_SETUP(10000); 	//start server
+	OFX_REMOTEUI_SERVER_SETUP(); 	//start server
 
 	OFX_REMOTEUI_SERVER_SET_UPCOMING_PARAM_GROUP("DEBUG");
 	OFX_REMOTEUI_SERVER_SHARE_PARAM(timeSample);
@@ -16,12 +16,12 @@ void testApp::setup(){
 
 	OFX_REMOTEUI_SERVER_SET_NEW_COLOR_N(2);
 	OFX_REMOTEUI_SERVER_SET_UPCOMING_PARAM_GROUP("screen");
-	OFX_REMOTEUI_SERVER_SHARE_PARAM(gap, 0, 1);
+	OFX_REMOTEUI_SERVER_SHARE_PARAM(outputScale, 0, 1);
 	OFX_REMOTEUI_SERVER_SET_NEW_COLOR_N(2);
 	OFX_REMOTEUI_SERVER_SHARE_PARAM(photoShowTime, 1, 30);
 	OFX_REMOTEUI_SERVER_SHARE_COLOR_PARAM(bgColor);
 
-	OFX_REMOTEUI_SERVER_SHARE_PARAM(drawScale, 0.1, 1.0);
+	OFX_REMOTEUI_SERVER_SHARE_PARAM(drawScale, 0.05, 1.0);
 	OFX_REMOTEUI_SERVER_SHARE_PARAM(xOffset, 0, ofGetWidth() * 2);
 
 	OFX_REMOTEUI_SERVER_SET_UPCOMING_PARAM_GROUP("photo background");
@@ -79,9 +79,23 @@ void testApp::setup(){
 	OFX_REMOTEUI_SERVER_SET_UPCOMING_PARAM_GROUP("scenes");
 
 	OFX_REMOTEUI_SERVER_SET_NEW_COLOR_N(2);
+
+	vector<string> modes; modes.push_back("TAXI");
+	modes.push_back("THEATER"); modes.push_back("PARK");
+	OFX_REMOTEUI_SERVER_SHARE_ENUM_PARAM(bg.mode, 0, 2, modes);
+
+	OFX_REMOTEUI_SERVER_SET_NEW_COLOR_N(1);
 	OFX_REMOTEUI_SERVER_SHARE_PARAM(bg.taxiPersonPos.x, 0, 1920);
 	OFX_REMOTEUI_SERVER_SHARE_PARAM(bg.taxiPersonPos.y, 0, 1080);
 	OFX_REMOTEUI_SERVER_SHARE_PARAM(bg.taxiPersonScale, 0, 2);
+	OFX_REMOTEUI_SERVER_SET_NEW_COLOR_N(1);
+	OFX_REMOTEUI_SERVER_SHARE_PARAM(bg.theaterPersonPos.x, 0, 1920);
+	OFX_REMOTEUI_SERVER_SHARE_PARAM(bg.theaterPersonPos.y, 0, 1080);
+	OFX_REMOTEUI_SERVER_SHARE_PARAM(bg.theaterPersonScale, 0, 2);
+	OFX_REMOTEUI_SERVER_SET_NEW_COLOR_N(1);
+	OFX_REMOTEUI_SERVER_SHARE_PARAM(bg.parkPersonPos.x, 0, 1920);
+	OFX_REMOTEUI_SERVER_SHARE_PARAM(bg.parkPersonPos.y, 0, 1080);
+	OFX_REMOTEUI_SERVER_SHARE_PARAM(bg.parkPersonScale, 0, 2);
 
 	OFX_REMOTEUI_SERVER_SET_NEW_COLOR_N(2);
 	OFX_REMOTEUI_SERVER_SHARE_PARAM(photoResult.pos.x, 0, 1920);
@@ -121,6 +135,12 @@ void testApp::setup(){
 	grabber.initGrabber(PREVIEW_W, PREVIEW_H);
 	TIME_SAMPLE_SET_AVERAGE_RATE(0.01);
 
+	//fake 1st photo here! 
+	loaded = true;
+	ofImage photoTaken;
+	photoTaken.loadImage("canonSDKImages/IMG_5205.JPG");
+	cameraMasked = bgRem.removeBg(photoTaken);
+
 }
 
 
@@ -159,7 +179,7 @@ void testApp::draw(){
 
 	float vratio = 9./16.;
 	ofRectangle r = ofRectangle(0,0, ofGetWidth(), ofGetHeight());
-	r.scaleFromCenter(gap);
+	r.scaleFromCenter(outputScale);
 	glColor3ub(255,255,255);
 	float x = r.x;
 	float y = r.y;
@@ -169,10 +189,14 @@ void testApp::draw(){
 	float photoAlpha = photoAnimation.val();
 
 	ofSetColor(255);
-	livePreviewFbo.draw(x,y,ww,hh);
-	if(photoAlpha > 0.0){
-		ofSetColor(255, 25 * photoAlpha);
-		photoFbo.draw(x, y, ww, hh);
+	if(!debug){
+		livePreviewFbo.draw(x,y,ww,hh);
+		if(photoAlpha > 0.0){
+			ofSetColor(255, 25 * photoAlpha);
+			photoFbo.draw(x, y, ww, hh);
+		}
+	}else{
+		gs.draw(ofGetWidth() - PREVIEW_W, ofGetHeight() - PREVIEW_H, PREVIEW_W, PREVIEW_H);
 	}
 
 	if ( imageShowCounter < 0 && loaded && !photoAnimation.isAnimating() && photoAnimation.val() > 0.9){
@@ -192,25 +216,21 @@ void testApp::draw(){
 	//grabber.draw(0, 0, 214, 160);
 //	gs.drawBgColor();
 
-
-	//rotating cube
-//	glPushMatrix();
-//	glTranslatef(10,10, 0);
-//	glRotatef( ofGetFrameNum() * 2, 0,0,1);
-//	glColor3ub(255,255,255);
-//	ofRect(-5,-5, 10,10);
-//	glPopMatrix();
 	if(debug){
 		//original image + ROI
 		int offset = -xOffset;
+		float s = 0.6;
 		bgRem.draw(offset, 0, drawScale);
-		ofPushMatrix();
-		ofScale(0.5, 0.5);
-		cameraMasked.draw(0,0);
-		ofPopMatrix();
-
+		cameraMasked.draw(0,1856 * drawScale,cameraMasked.getWidth() * s, cameraMasked.getHeight() * s );
 	}
 
+	//rotating cube
+	glPushMatrix();
+	glTranslatef(10,10, 0);
+	glRotatef( ofGetFrameNum() * 3, 0,0,1);
+	glColor3ub(255,255,255);
+	ofRect(-5,-5, 10,10);
+	glPopMatrix();
 }
 
 
@@ -222,6 +242,7 @@ void testApp::exit(){
 	cam->destroy();
 	printf("bye!\n");
 }
+
 
 void testApp::photoWasDownloaded(char* path){
 
@@ -252,15 +273,27 @@ void testApp::keyPressed(int key){
 			cam->takePictureThreaded();
 		}break;
 
+		case '1':{
+			ofImage photoTaken;
+			photoTaken.loadImage("canonSDKImages/IMG_5205.JPG");
+			cameraMasked = bgRem.removeBg(photoTaken);
+			}break;
 
-		case 'd':{
-			cam->downloadLastImage();
-		}break;
+//		case 'd':{
+//			cam->downloadLastImage();
+//		}break;
 
 		case 'f':
 			ofToggleFullscreen();
 			break;
+
 		case ' ':
+			bg.mode ++;
+			if(bg.mode >=3) bg.mode = 0;
+			OFX_REMOTEUI_SERVER_PUSH_TO_CLIENT();
+			break;
+
+		case 'l':
 			if ( !cam->getLiveViewActive() )
 				cam->beginLiveView();
 			else

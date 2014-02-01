@@ -27,13 +27,13 @@
 		A29D8C96AE042ECEAA1BD4F3 /* NetworkingUtilsWin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A5B1FAD3F30C8065C396ACB /* NetworkingUtilsWin.cpp */; };
 		ADE367465D2A8EBAD4C7A8D9 /* IpEndpointName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ADD194746185E2DA11468377 /* IpEndpointName.cpp */; };
 		AF677F0ABF3AA960413308F9 /* ofxRemoteUIServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7217AB196DA7AF4032570D9 /* ofxRemoteUIServer.cpp */; };
+		BB351694189C90C8007B325E /* ofxGreenscreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BB35168F189C90C8007B325E /* ofxGreenscreen.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		BBB05994189C79A0006E8222 /* LivePreviewBg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBB05992189C79A0006E8222 /* LivePreviewBg.cpp */; };
 		BBB059A0189C7CFC006E8222 /* ofxAnimatable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBB05998189C7CFC006E8222 /* ofxAnimatable.cpp */; };
 		BBB059A1189C7CFC006E8222 /* ofxAnimatableFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBB0599A189C7CFC006E8222 /* ofxAnimatableFloat.cpp */; };
 		BBB059A2189C7CFC006E8222 /* ofxAnimatableOfColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBB0599C189C7CFC006E8222 /* ofxAnimatableOfColor.cpp */; };
 		BBB059A3189C7CFC006E8222 /* ofxAnimatableOfPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBB0599E189C7CFC006E8222 /* ofxAnimatableOfPoint.cpp */; };
-		BBB117CE189C5C5E006A2156 /* ofxGreenscreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBB117C9189C5C5E006A2156 /* ofxGreenscreen.cpp */; };
 		BBB117D1189C5C74006A2156 /* WhiteBgRemover.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BBB117CF189C5C74006A2156 /* WhiteBgRemover.cpp */; };
 		BBB11B4517EA21FF002AAAD8 /* DPP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB11AB017EA21FF002AAAD8 /* DPP.framework */; };
 		BBB11B4617EA21FF002AAAD8 /* EDSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBB11AB117EA21FF002AAAD8 /* EDSDK.framework */; };
@@ -152,6 +152,10 @@
 		AE335EB4709BFD4671EEAC84 /* MessageMappingOscPacketListener.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = MessageMappingOscPacketListener.h; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/MessageMappingOscPacketListener.h; sourceTree = SOURCE_ROOT; };
 		B21E7E5F548EEA92F368040B /* tinyxml.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = tinyxml.h; path = ../../../addons/ofxXmlSettings/libs/tinyxml.h; sourceTree = SOURCE_ROOT; };
 		B31C608870ECEB2490A93736 /* ofxOscParameterSync.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxOscParameterSync.h; path = ../../../addons/ofxOsc/src/ofxOscParameterSync.h; sourceTree = SOURCE_ROOT; };
+		BB351680189C90C8007B325E /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		BB35168D189C90C8007B325E /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		BB35168F189C90C8007B325E /* ofxGreenscreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxGreenscreen.cpp; sourceTree = "<group>"; };
+		BB351690189C90C8007B325E /* ofxGreenscreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxGreenscreen.h; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		BBB05992189C79A0006E8222 /* LivePreviewBg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LivePreviewBg.cpp; sourceTree = "<group>"; };
 		BBB05993189C79A0006E8222 /* LivePreviewBg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LivePreviewBg.h; sourceTree = "<group>"; };
@@ -164,8 +168,6 @@
 		BBB0599D189C7CFC006E8222 /* ofxAnimatableOfColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxAnimatableOfColor.h; sourceTree = "<group>"; };
 		BBB0599E189C7CFC006E8222 /* ofxAnimatableOfPoint.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxAnimatableOfPoint.cpp; sourceTree = "<group>"; };
 		BBB0599F189C7CFC006E8222 /* ofxAnimatableOfPoint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxAnimatableOfPoint.h; sourceTree = "<group>"; };
-		BBB117C9189C5C5E006A2156 /* ofxGreenscreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxGreenscreen.cpp; sourceTree = "<group>"; };
-		BBB117CA189C5C5E006A2156 /* ofxGreenscreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxGreenscreen.h; sourceTree = "<group>"; };
 		BBB117CF189C5C74006A2156 /* WhiteBgRemover.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WhiteBgRemover.cpp; sourceTree = "<group>"; };
 		BBB117D0189C5C74006A2156 /* WhiteBgRemover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WhiteBgRemover.h; sourceTree = "<group>"; };
 		BBB11AB017EA21FF002AAAD8 /* DPP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DPP.framework; sourceTree = "<group>"; };
@@ -455,11 +457,31 @@
 			name = win32;
 			sourceTree = "<group>";
 		};
+		BB35167F189C90C8007B325E /* ofxGreenscreen */ = {
+			isa = PBXGroup;
+			children = (
+				BB351680189C90C8007B325E /* .gitignore */,
+				BB35168D189C90C8007B325E /* README */,
+				BB35168E189C90C8007B325E /* src */,
+			);
+			name = ofxGreenscreen;
+			path = ../../../addons/ofxGreenscreen;
+			sourceTree = "<group>";
+		};
+		BB35168E189C90C8007B325E /* src */ = {
+			isa = PBXGroup;
+			children = (
+				BB35168F189C90C8007B325E /* ofxGreenscreen.cpp */,
+				BB351690189C90C8007B325E /* ofxGreenscreen.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				BB35167F189C90C8007B325E /* ofxGreenscreen */,
 				BBB05996189C7CFC006E8222 /* ofxAnimatable */,
-				BBB117B9189C5C5E006A2156 /* ofxGreenscreen */,
 				BBB11C0D17EA312F002AAAD8 /* ofxOpenCv */,
 				BBB11B9517EA30F1002AAAD8 /* ofxKinect */,
 				E6053AB7FEC63D5F83825B88 /* ofxOsc */,
@@ -522,24 +544,6 @@
 			);
 			name = src;
 			path = ../../../addons/ofxAnimatable/src;
-			sourceTree = "<group>";
-		};
-		BBB117B9189C5C5E006A2156 /* ofxGreenscreen */ = {
-			isa = PBXGroup;
-			children = (
-				BBB117C8189C5C5E006A2156 /* src */,
-			);
-			name = ofxGreenscreen;
-			path = ../../../addons/ofxGreenscreen;
-			sourceTree = "<group>";
-		};
-		BBB117C8189C5C5E006A2156 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				BBB117C9189C5C5E006A2156 /* ofxGreenscreen.cpp */,
-				BBB117CA189C5C5E006A2156 /* ofxGreenscreen.h */,
-			);
-			path = src;
 			sourceTree = "<group>";
 		};
 		BBB11AAE17EA21FF002AAAD8 /* EDSDK */ = {
@@ -1204,6 +1208,7 @@
 				933A2227713C720CEFF80FD9 /* tinyxml.cpp in Sources */,
 				9D44DC88EF9E7991B4A09951 /* tinyxmlerror.cpp in Sources */,
 				5A4349E9754D6FA14C0F2A3A /* tinyxmlparser.cpp in Sources */,
+				BB351694189C90C8007B325E /* ofxGreenscreen.cpp in Sources */,
 				CD2B7242E152B8EBF3E65F20 /* ofxRemoteUI.cpp in Sources */,
 				2B5A4E805891FC6E6EBAC9F5 /* ofxRemoteUIClient.cpp in Sources */,
 				AF677F0ABF3AA960413308F9 /* ofxRemoteUIServer.cpp in Sources */,
@@ -1214,7 +1219,6 @@
 				BBB11B9017EA2286002AAAD8 /* ThreadedLiveView.mm in Sources */,
 				BBB11C0617EA30F1002AAAD8 /* cameras.c in Sources */,
 				BBB11C0717EA30F1002AAAD8 /* core.c in Sources */,
-				BBB117CE189C5C5E006A2156 /* ofxGreenscreen.cpp in Sources */,
 				BBB059A2189C7CFC006E8222 /* ofxAnimatableOfColor.cpp in Sources */,
 				BBB11C0817EA30F1002AAAD8 /* registration.c in Sources */,
 				BBB11C0917EA30F1002AAAD8 /* tilt.c in Sources */,

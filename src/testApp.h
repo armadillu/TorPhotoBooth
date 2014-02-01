@@ -43,12 +43,11 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
-		float gap;
+		float outputScale;
 		bool timeSample;
 	float photoShowTime; //secs
 
 	void photoWasDownloaded(char* path);	//for the ofxCanonAddon
-
 
 	bool loaded;
 
