@@ -27,6 +27,7 @@ ofImage WhiteBgRemover::removeBg( ofImage & input){
 		grayImage.allocate(w, h);
 		grayTh.allocate(w, h);
 		grayMorph.allocate(w, h);
+		grayBlur.allocate(w, h);
 	}
 
 	colorImg.setFromPixels(input.getPixels(), input.getWidth(), input.getHeight());
@@ -35,6 +36,7 @@ ofImage WhiteBgRemover::removeBg( ofImage & input){
 	grayImage.setROI(photoCrop.x, photoCrop.y, photoCrop.width, photoCrop.height);
 	grayTh.setROI(photoCrop.x, photoCrop.y, photoCrop.width, photoCrop.height);
 	grayMorph.setROI(photoCrop.x, photoCrop.y, photoCrop.width, photoCrop.height);
+	grayBlur.setROI(photoCrop.x, photoCrop.y, photoCrop.width, photoCrop.height);
 
 	grayImage = colorImg;
 	//grayImage.contrastStretch();
@@ -70,11 +72,15 @@ ofImage WhiteBgRemover::removeBg( ofImage & input){
 	//	}
 
 
+	grayBlur = grayMorph;
+	for(int i = 0; i < numBlur; i++){
+		grayBlur.blur();
+	}
 
 	//apply mask to orinigal image
 
 	ofImage mask;
-	mask.setFromPixels(grayMorph.getPixels(), grayMorph.getWidth(), grayMorph.getHeight(), OF_IMAGE_GRAYSCALE);
+	mask.setFromPixels(grayBlur.getPixels(), grayBlur.getWidth(), grayBlur.getHeight(), OF_IMAGE_GRAYSCALE);
 	ret = input;
 	ret.setImageType(OF_IMAGE_COLOR_ALPHA);
 
@@ -110,13 +116,13 @@ void WhiteBgRemover::draw(int x, int y, float drawScale){
 	grayImage.drawROI(offset, y, photoCrop.width * drawScale, photoCrop.height * drawScale);		offset += photoCrop.width * drawScale;
 	grayTh.drawROI(offset, y, photoCrop.width * drawScale, photoCrop.height * drawScale);		offset += photoCrop.width * drawScale;
 	grayMorph.drawROI(offset, y, photoCrop.width * drawScale, photoCrop.height * drawScale);		offset += photoCrop.width * drawScale;
-	//mask.drawROI(offset, 0, photoCrop.width * drawScale, photoCrop.height * drawScale);		offset += photoCrop.width * drawScale;
+	//grayBlur.drawROI(offset, 0, photoCrop.width * drawScale, photoCrop.height * drawScale);		offset += photoCrop.width * drawScale;
 
-	contourFinder.draw(offset, y, w * drawScale, h * drawScale);
+	contourFinder.draw(w * drawScale + x, y, w * drawScale, h * drawScale);
 	for(int i = 0; i < contourFinder.nBlobs; i++){
-		ofDrawBitmapString("ID :" + ofToString(i) + "\narea:" + ofToString(contourFinder.blobs[i].area, 1) + (contourFinder.blobs[i].hole ? "\nhole!" : ""), contourFinder.blobs[i].centroid * drawScale + ofVec2f(offset, 0));
+		ofDrawBitmapStringHighlight("ID :" + ofToString(i) + "\narea:" + ofToString(contourFinder.blobs[i].area, 1) + (contourFinder.blobs[i].hole ? "\nhole!" : ""), contourFinder.blobs[i].centroid * drawScale + ofVec2f(w * drawScale + x, 0));
 	}
-	offset += photoCrop.width * drawScale;
+	//offset += photoCrop.width * drawScale;
 
 	//finalOutput.crop(photoCrop.x, photoCrop.y, photoCrop.width, photoCrop.height);
 	ret.draw(offset, y, photoCrop.width * drawScale, photoCrop.height * drawScale);

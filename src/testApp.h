@@ -33,6 +33,7 @@ class testApp : public ofBaseApp{
 		void draw();
 		void exit();
 
+		void calcWhiteBg();
 		void keyPressed(int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y );
@@ -61,7 +62,7 @@ class testApp : public ofBaseApp{
 	ofColor keyColor;
 	ofImage greenInput;
 
-	bool debug;
+	bool debugMasks;
 
 	WhiteBgRemover bgRem;
 	float drawScale;

@@ -32,6 +32,8 @@ public:
 	int numDilate2ndPass;
 	int numErode2ndPass;
 
+	int numBlur;
+
 	float drawScale;
 	float xOffset;
 
@@ -44,6 +46,7 @@ private:
 	ofxCvGrayscaleImage	grayImage;
 	ofxCvGrayscaleImage	grayTh;
 	ofxCvGrayscaleImage	grayMorph;
+	ofxCvGrayscaleImage	grayBlur;
 
 	ofxCvContourFinder contourFinder;
 	ofImage ret;

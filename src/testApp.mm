@@ -1,5 +1,21 @@
 #include "testApp.h"
 
+bool recalcNow = false;
+void serverCallback(RemoteUIServerCallBackArg arg){
+	string paramName = arg.paramName;
+
+	switch (arg.action) {
+		case CLIENT_DID_SET_PRESET:
+		case CLIENT_UPDATED_PARAM:{
+			string match = "bgRem"; //recalc masks when editing bgRem.* params
+			auto res = std::mismatch(match.begin(), match.end(), paramName.begin());
+			if (res.first == match.end()){
+				recalcNow = true;
+			}
+			}break;
+	}
+}
+
 //--------------------------------------------------------------
 void testApp::setup(){
 
@@ -9,20 +25,23 @@ void testApp::setup(){
 	ofBackground(0);
 
 	OFX_REMOTEUI_SERVER_SETUP(); 	//start server
+	OFX_REMOTEUI_SERVER_GET_INSTANCE()->setCallback(serverCallback);
 
 	OFX_REMOTEUI_SERVER_SET_UPCOMING_PARAM_GROUP("DEBUG");
 	OFX_REMOTEUI_SERVER_SHARE_PARAM(timeSample);
-	OFX_REMOTEUI_SERVER_SHARE_PARAM(debug);
+	OFX_REMOTEUI_SERVER_SHARE_PARAM(debugMasks);
 
 	OFX_REMOTEUI_SERVER_SET_NEW_COLOR_N(2);
 	OFX_REMOTEUI_SERVER_SET_UPCOMING_PARAM_GROUP("screen");
 	OFX_REMOTEUI_SERVER_SHARE_PARAM(outputScale, 0, 1);
 	OFX_REMOTEUI_SERVER_SET_NEW_COLOR_N(2);
 	OFX_REMOTEUI_SERVER_SHARE_PARAM(photoShowTime, 1, 30);
+	OFX_REMOTEUI_SERVER_SET_NEW_COLOR_N(2);
 	OFX_REMOTEUI_SERVER_SHARE_COLOR_PARAM(bgColor);
 
+	OFX_REMOTEUI_SERVER_SET_NEW_COLOR_N(2);
 	OFX_REMOTEUI_SERVER_SHARE_PARAM(drawScale, 0.05, 1.0);
-	OFX_REMOTEUI_SERVER_SHARE_PARAM(xOffset, 0, ofGetWidth() * 2);
+	OFX_REMOTEUI_SERVER_SHARE_PARAM(xOffset, 0, ofGetWidth() * 3.5);
 
 	OFX_REMOTEUI_SERVER_SET_UPCOMING_PARAM_GROUP("photo background");
 	OFX_REMOTEUI_SERVER_SET_NEW_COLOR_N(2);
@@ -40,12 +59,13 @@ void testApp::setup(){
 	OFX_REMOTEUI_SERVER_SHARE_PARAM(bgRem.numErode1stPass, 0, 5);
 	OFX_REMOTEUI_SERVER_SHARE_PARAM(bgRem.numErode2ndPass, 0, 5);
 	OFX_REMOTEUI_SERVER_SHARE_PARAM(bgRem.numDilate2ndPass, 0, 5);
+	OFX_REMOTEUI_SERVER_SET_NEW_COLOR_N(1);
+	OFX_REMOTEUI_SERVER_SHARE_PARAM(bgRem.numBlur, 0, 5);
 
 	OFX_REMOTEUI_SERVER_SET_NEW_COLOR_N(2);
 
 	OFX_REMOTEUI_SERVER_SET_UPCOMING_PARAM_GROUP("green screen");
 	OFX_REMOTEUI_SERVER_SHARE_COLOR_PARAM(keyColor);
-
 
 	OFX_REMOTEUI_SERVER_SET_NEW_COLOR_N(2);
 	OFX_REMOTEUI_SERVER_SHARE_PARAM(gs.doBaseMask);
@@ -137,10 +157,7 @@ void testApp::setup(){
 
 	//fake 1st photo here! 
 	loaded = true;
-	ofImage photoTaken;
-	photoTaken.loadImage("canonSDKImages/IMG_5205.JPG");
-	cameraMasked = bgRem.removeBg(photoTaken);
-
+	recalcNow = true;
 }
 
 
@@ -153,10 +170,19 @@ void testApp::update(){
 
 	photoAnimation.update(dt);
 
+	TIME_SAMPLE_START("canon");
 	cam->update();
 	imageShowCounter--;
+	TIME_SAMPLE_STOP("canon");
 
+	TIME_SAMPLE_START("grabber");
 	grabber.update();
+	TIME_SAMPLE_STOP("grabber");
+
+	if(recalcNow){
+		calcWhiteBg();
+		recalcNow = false;
+	}
 
 	TIME_SAMPLE_START("greenScreen");
 	gs.setBgColor(keyColor);
@@ -173,7 +199,6 @@ void testApp::draw(){
 	ofSetupScreen();
 	ofBackground(bgColor);
 
-
 	bg.draw( gs, livePreviewFbo); //fill in fbo with bacgrkound and masked live preview of green screen
 	photoResult.draw(cameraMasked, photoFbo);
 
@@ -189,7 +214,7 @@ void testApp::draw(){
 	float photoAlpha = photoAnimation.val();
 
 	ofSetColor(255);
-	if(!debug){
+	if(!debugMasks){
 		livePreviewFbo.draw(x,y,ww,hh);
 		if(photoAlpha > 0.0){
 			ofSetColor(255, 25 * photoAlpha);
@@ -216,7 +241,7 @@ void testApp::draw(){
 	//grabber.draw(0, 0, 214, 160);
 //	gs.drawBgColor();
 
-	if(debug){
+	if(debugMasks){
 		//original image + ROI
 		int offset = -xOffset;
 		float s = 0.6;
@@ -244,6 +269,15 @@ void testApp::exit(){
 }
 
 
+void testApp::calcWhiteBg(){
+	TIME_SAMPLE_START("whiteBG");
+	ofImage photoTaken;
+	photoTaken.loadImage("canonSDKImages/IMG_5205.JPG");
+	cameraMasked = bgRem.removeBg(photoTaken);
+	TIME_SAMPLE_STOP("whiteBG");
+
+}
+
 void testApp::photoWasDownloaded(char* path){
 
 	printf("photo downloaded!!!!%s\n", path);
@@ -251,15 +285,8 @@ void testApp::photoWasDownloaded(char* path){
 	f.open(path);
 	if (f.exists()) {
 		loaded = true;
-		ofImage photoTaken;
-		photoTaken.loadImage(path);
-		imageShowCounter = 60 * photoShowTime;	//5 seconds
-		TIME_SAMPLE_START("masking");
-		cameraMasked = bgRem.removeBg(photoTaken);
-		TIME_SAMPLE_STOP("masking");
-
+		calcWhiteBg();
 		photoAnimation.animateTo(1);
-
 	}
 }
 
@@ -274,9 +301,7 @@ void testApp::keyPressed(int key){
 		}break;
 
 		case '1':{
-			ofImage photoTaken;
-			photoTaken.loadImage("canonSDKImages/IMG_5205.JPG");
-			cameraMasked = bgRem.removeBg(photoTaken);
+			recalcNow = true;
 			}break;
 
 //		case 'd':{
