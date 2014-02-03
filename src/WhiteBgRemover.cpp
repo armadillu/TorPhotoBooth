@@ -40,7 +40,7 @@ ofImage WhiteBgRemover::removeBg( ofImage & input){
 
 	grayImage = colorImg;
 	//grayImage.contrastStretch();
-	//cvConvertScale(grayImage.getCvImage(), grayImage.getCvImage(), scale, shift ); //
+	cvConvertScale(colorImg.getCvImage(), colorImg.getCvImage(), scale, shift ); //
 	grayTh = grayImage;
 
 	grayTh.threshold(threshold, true); //true for invert
@@ -81,7 +81,8 @@ ofImage WhiteBgRemover::removeBg( ofImage & input){
 
 	ofImage mask;
 	mask.setFromPixels(grayBlur.getPixels(), grayBlur.getWidth(), grayBlur.getHeight(), OF_IMAGE_GRAYSCALE);
-	ret = input;
+	//ret = input;
+	ret.setFromPixels(colorImg.getPixels(), colorImg.getWidth(), colorImg.getHeight(), OF_IMAGE_COLOR);
 	ret.setImageType(OF_IMAGE_COLOR_ALPHA);
 
 	//apply mask

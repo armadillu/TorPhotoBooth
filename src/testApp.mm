@@ -24,6 +24,11 @@ void testApp::setup(){
 	ofEnableAlphaBlending();
 	ofBackground(0);
 
+	gs.setCropLeft(0.0);
+	gs.setCropRight(0.0);
+	gs.setCropBottom(0.0);
+	gs.setCropTop(0.0);
+
 	OFX_REMOTEUI_SERVER_SETUP(); 	//start server
 	OFX_REMOTEUI_SERVER_GET_INSTANCE()->setCallback(serverCallback);
 
@@ -95,6 +100,9 @@ void testApp::setup(){
 	OFX_REMOTEUI_SERVER_SET_NEW_COLOR_N(2);
 	OFX_REMOTEUI_SERVER_SHARE_PARAM(gs.doGreenSpill);
 	OFX_REMOTEUI_SERVER_SHARE_PARAM(gs.strengthGreenSpill, 0, 1);
+	OFX_REMOTEUI_SERVER_SET_NEW_COLOR_N(2);
+	OFX_REMOTEUI_SERVER_SHARE_PARAM(gs.cropLeft,0,1);
+	OFX_REMOTEUI_SERVER_SHARE_PARAM(gs.cropRight,0,1);
 
 	OFX_REMOTEUI_SERVER_SET_UPCOMING_PARAM_GROUP("scenes");
 
@@ -121,7 +129,6 @@ void testApp::setup(){
 	OFX_REMOTEUI_SERVER_SHARE_PARAM(photoResult.pos.x, 0, 1920);
 	OFX_REMOTEUI_SERVER_SHARE_PARAM(photoResult.pos.y, 0, 1080);
 	OFX_REMOTEUI_SERVER_SHARE_PARAM(photoResult.scale, 0, 2);
-
 
 	OFX_REMOTEUI_SERVER_LOAD_FROM_XML();
 
@@ -157,7 +164,10 @@ void testApp::setup(){
 
 	//fake 1st photo here! 
 	loaded = true;
-	recalcNow = true;
+	recalcNow = false;
+	lastPhotoPath = "canonSDKImages/IMG_5205.JPG";
+	calcWhiteBg(lastPhotoPath);
+
 }
 
 
@@ -168,11 +178,12 @@ void testApp::update(){
 	if(timeSample) TIME_SAMPLE_ENABLE();
 	else TIME_SAMPLE_DISABLE();
 
+
 	photoAnimation.update(dt);
 
 	TIME_SAMPLE_START("canon");
 	cam->update();
-	imageShowCounter--;
+	imageShowCounter -= dt;
 	TIME_SAMPLE_STOP("canon");
 
 	TIME_SAMPLE_START("grabber");
@@ -180,7 +191,7 @@ void testApp::update(){
 	TIME_SAMPLE_STOP("grabber");
 
 	if(recalcNow){
-		calcWhiteBg();
+		calcWhiteBg(lastPhotoPath);
 		recalcNow = false;
 	}
 
@@ -211,15 +222,17 @@ void testApp::draw(){
 	float ww = r.width;
 	float hh = r.height;
 
-	float photoAlpha = photoAnimation.val();
+	float photoAlpha = photoAnimation.val() * 255;
 
 	ofSetColor(255);
 	if(!debugMasks){
+		ofSetColor(255, 255 - photoAlpha);
 		livePreviewFbo.draw(x,y,ww,hh);
 		if(photoAlpha > 0.0){
-			ofSetColor(255, 25 * photoAlpha);
+			ofSetColor(255, photoAlpha);
 			photoFbo.draw(x, y, ww, hh);
 		}
+		ofSetColor(255);
 	}else{
 		gs.draw(ofGetWidth() - PREVIEW_W, ofGetHeight() - PREVIEW_H, PREVIEW_W, PREVIEW_H);
 	}
@@ -269,10 +282,10 @@ void testApp::exit(){
 }
 
 
-void testApp::calcWhiteBg(){
+void testApp::calcWhiteBg(string path){
 	TIME_SAMPLE_START("whiteBG");
 	ofImage photoTaken;
-	photoTaken.loadImage("canonSDKImages/IMG_5205.JPG");
+	photoTaken.loadImage(path);
 	cameraMasked = bgRem.removeBg(photoTaken);
 	TIME_SAMPLE_STOP("whiteBG");
 
@@ -283,10 +296,12 @@ void testApp::photoWasDownloaded(char* path){
 	printf("photo downloaded!!!!%s\n", path);
 	ofFile f;
 	f.open(path);
+	lastPhotoPath = path;
 	if (f.exists()) {
 		loaded = true;
-		calcWhiteBg();
+		calcWhiteBg(lastPhotoPath);
 		photoAnimation.animateTo(1);
+		imageShowCounter = photoShowTime;
 	}
 }
 
@@ -317,6 +332,8 @@ void testApp::keyPressed(int key){
 			if(bg.mode >=3) bg.mode = 0;
 			OFX_REMOTEUI_SERVER_PUSH_TO_CLIENT();
 			break;
+
+		case 's': imageShowCounter = 0; break;
 
 		case 'l':
 			if ( !cam->getLiveViewActive() )
@@ -349,6 +366,7 @@ void testApp::mouseDragged(int x, int y, int button){
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
 
+	cam->takePictureThreaded();
 }
 
 //--------------------------------------------------------------

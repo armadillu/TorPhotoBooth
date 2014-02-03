@@ -33,7 +33,7 @@ class testApp : public ofBaseApp{
 		void draw();
 		void exit();
 
-		void calcWhiteBg();
+		void calcWhiteBg(string path);
 		void keyPressed(int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y );
@@ -44,17 +44,18 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
-		float outputScale;
-		bool timeSample;
+	float outputScale;
+	bool timeSample;
 	float photoShowTime; //secs
 
 	void photoWasDownloaded(char* path);	//for the ofxCanonAddon
 
 	bool loaded;
 
+	string lastPhotoPath;
 	ofImage cameraMasked; //photo taken + mask
 	ofColor bgColor;
-	int imageShowCounter;
+	float imageShowCounter;
 	CanonCameraWrapper * 	cam;
 
 	ofVideoGrabber grabber;
