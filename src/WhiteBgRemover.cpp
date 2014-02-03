@@ -120,7 +120,13 @@ void WhiteBgRemover::draw(int x, int y, float drawScale){
 
 	contourFinder.draw(w * drawScale + x, y, w * drawScale, h * drawScale);
 	for(int i = 0; i < contourFinder.nBlobs; i++){
-		ofDrawBitmapStringHighlight("ID :" + ofToString(i) + "\narea:" + ofToString(contourFinder.blobs[i].area, 1) + (contourFinder.blobs[i].hole ? "\nhole!" : ""), contourFinder.blobs[i].centroid * drawScale + ofVec2f(w * drawScale + x, 0));
+		string m = "ID :" + ofToString(i) +	"\narea:" + ofToString(contourFinder.blobs[i].area, 1) + string(contourFinder.blobs[i].hole ? "\nhole!" : "");
+
+		ofDrawBitmapStringHighlight( m,
+									contourFinder.blobs[i].centroid * drawScale + ofVec2f(w * drawScale + x, 0),
+									ofColor(0,128),
+									ofColor::white
+									);
 	}
 	//offset += photoCrop.width * drawScale;
 
